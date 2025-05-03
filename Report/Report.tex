@@ -1,0 +1,164 @@
+\documentclass[13pt]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{longtable}
+\usepackage{geometry}
+\geometry{a4paper}
+
+\title{Design and Implementation of a Database for a Media Streaming Service}
+\author{Mahla Entezari}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+In this project, I designed and built a database for a \textbf{Media Streaming Service}. The database stores critical information such as:
+\begin{itemize}
+    \item User profiles
+    \item Subscription details
+    \item Payment histories
+    \item Personalized watch lists
+\end{itemize}
+
+Additionally, it manages media assets, including movies and series with multiple episodes while tracking their storage locations and associated production companies. 
+
+The system ensures that all data is efficiently organized to support user activities like:
+\begin{itemize}
+    \item Leaving comments
+    \item Rating media
+    \item Curating a watch list for future viewing
+\end{itemize}
+
+\section{Specifications}
+The database was designed with the following features:
+\begin{itemize}
+    \item Each user can subscribe to the service for a specific period. The subscription start and end dates (including subscription tier) are stored.
+    \item The users' payment history, including related subscription and transaction details, is tracked.
+    \item A media entity can be a movie or a series and includes:
+    \begin{itemize}
+        \item Genre
+        \item Production year
+        \item Average rating score
+        \item Director
+        \item Actors
+        \item Producers
+        \item List of comments left by users
+    \end{itemize}
+    \item Users can leave multiple comments for a media entity but can only rate each item once.
+    \item A series consists of multiple episodes. Each movie or episode of a series must have a storage location, which stores the server and path of the media file.
+    \item Each movie or series belongs to a production company, and its details (name, year of establishment, and contact information) are stored.
+    \item Each user has a ‘Watch Later’ list to which specific movies or episodes of a series can be added.
+\end{itemize}
+
+\section{Requirements Analysis}
+
+\subsection{Entities}
+The following entities were identified based on the specifications:
+\begin{itemize}
+    \item \textbf{User}: Represents users of the streaming service, storing their personal and subscription information.
+        \begin{itemize}
+            \item UserID, Username, Password, Email, SubscriptionTier, SubscriptionStartDate, SubscriptionEndDate
+        \end{itemize}
+    \item \textbf{Payment}: Records payment details for users' subscriptions.
+        \begin{itemize}
+            \item PaymentID, UserID, AmountPaid, SubscriptionID
+        \end{itemize}
+    \item \textbf{Media}: Stores information about movies and series.
+        \begin{itemize}
+            \item MediaID, Title, Type, Genre, ProductionYear, AverageRatingScore, Director, Actors, Producers, Comments
+        \end{itemize}
+    \item \textbf{Company}: Represents production companies.
+        \begin{itemize}
+            \item CompanyID, Name, YearOfEstablishment, PhoneNumber, Location, Email
+        \end{itemize}
+    \item \textbf{Comment}: Stores users' comments on media.
+        \begin{itemize}
+            \item CommentID, UserID, MediaID, Text
+        \end{itemize}
+    \item \textbf{Episode}: Represents individual episodes in a series.
+        \begin{itemize}
+            \item EpisodeID, SeriesID, Title, StorageID
+        \end{itemize}
+    \item \textbf{Movie}: Represents movies in the system.
+        \begin{itemize}
+            \item MovieID, StorageID, MediaID, Title
+        \end{itemize}
+    \item \textbf{Series}: Represents series, which consist of multiple episodes.
+        \begin{itemize}
+            \item SeriesID, MediaID, Title
+        \end{itemize}
+    \item \textbf{StorageLocation}: Stores details about the storage of media files.
+        \begin{itemize}
+            \item StorageID, Server, Path
+        \end{itemize}
+    \item \textbf{Rating}: Stores ratings for media items given by users.
+        \begin{itemize}
+            \item RatingID, UserID, MediaID, Score
+        \end{itemize}
+    \item \textbf{WatchLater}: Tracks the "Watch Later" list for users.
+        \begin{itemize}
+            \item ListID, UserID, MediaID
+        \end{itemize}
+\end{itemize}
+
+\subsection{Relationships}
+The relationships between entities are as follows:
+\begin{longtable}{|p{3cm}|p{3cm}|p{2.5cm}|p{5cm}|}
+\hline
+\textbf{Entity1} & \textbf{Entity2} & \textbf{Type} & \textbf{Explanation} \\
+\hline
+User & Payment & One-to-Many & A user can make multiple payments. \\
+User & Comment & One-to-Many & A user can leave multiple comments on media items. \\
+User & Rating & One-to-Many & A user can rate multiple media items, but only once per item. \\
+User & Watch Later & Many-to-Many & A user can save multiple media items to their "Watch Later" list. \\
+Media & Production Company & Many-to-One & Many media items can belong to a single production company. \\
+Series & Episode & One-to-Many & A series can have multiple episodes. \\
+Movie/Episode & StorageLocation & One-to-One & Each movie or episode has one unique storage location. \\
+Media & Comment & One-to-Many & Each media item can have multiple comments. \\
+Media & Rating & One-to-Many & Each media item can have multiple ratings. \\
+\hline
+\end{longtable}
+
+\section{Conceptual Database Design}
+
+\subsection{Enhanced Entity-Relationship (EER) Diagram}
+Below is the Enhanced Entity-Relationship (EER) diagram that visually represents the entities, attributes, and relationships between them in the database:
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{ER-Diagram.png}
+\caption{Enhanced Entity-Relationship (EER) Diagram}
+\end{figure}
+
+This diagram showcases entities like **User**, **Payment**, **Media**, **Comment**, **Episode**, **Rating**, and **WatchLater**, and how they interact in the database.
+
+\subsection{UML Diagram}
+The UML diagram represents the structural relationships between objects and their interactions. This is useful for understanding the flow of data across the system.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.545\textwidth]{UML-Diagram.png}
+\caption{UML Diagram}
+\end{figure}
+
+This diagram helps visualize the interaction between components such as **User**, **Subscription**, **Media**, **Payment**, and **Watch Later** lists.
+
+\section{Step-by-Step Explanation}
+Each entity and its relationships are carefully selected to reflect the key functionalities of a media streaming service:
+\begin{itemize}
+    \item \textbf{Users} are linked to their \textbf{Payments}, \textbf{Comments}, \textbf{Ratings}, and \textbf{Watch Later} lists, supporting interactions like leaving feedback and managing media preferences.
+    \item \textbf{Media} items (movies and series) are linked to \textbf{Production Companies} and have a direct relationship with \textbf{Comments} and \textbf{Ratings} for user feedback.
+\end{itemize}
+
+\section{Constraints}
+The database design incorporates various constraints to maintain data integrity:
+- **Primary Keys** uniquely identify records.
+- **Foreign Keys** maintain referential integrity between related tables (e.g., linking **Payment** to **User**).
+- **Unique Constraints** ensure that data such as **Username** and **Email** are unique.
+
+\section{Conclusion}
+This project outlines the design and implementation of a database for a media streaming service, capturing user data, media details, and their interactions. The system efficiently supports critical features such as subscription management, media rating, and comment handling, ensuring a smooth user experience.
+
+\end{document}
